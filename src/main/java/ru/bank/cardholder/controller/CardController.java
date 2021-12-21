@@ -6,9 +6,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.bank.cardholder.domain.Card;
+import io.swagger.annotations.Api;
 
 @RestController
 @RequestMapping("card")
+@Api(tags = { "Accounts and Transactions REST endpoints" })
 public class CardController {
 
     @GetMapping(path = "/{number}")
