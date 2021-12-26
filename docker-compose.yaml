@@ -1,29 +1,17 @@
-version: "3.1"
+version: "3.9"
 services:
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: 'rabbitmq'
     ports:
-      - 22183:2181
-    environment:
-      - ALLOW_ANONYMOUS_LOGIN=true
-      - ZOOKEEPER_CLIENT_PORT=2181
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    depends_on:
-      - zookeeper
-    ports:
-      - 29094:29092
-      - 29095:29093
-    environment:
-      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9093,BROKER://0.0.0.0:29092
-      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=BROKER:PLAINTEXT,PLAINTEXT:PLAINTEXT
-      - KAFKA_INTER_BROKER_LISTENER_NAME=BROKER
-      - KAFKA_BROKER_ID=1
-      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
-      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
-      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9093,BROKER://localhost:29093
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
-      - ALLOW_PLAINTEXT_LISTENER=true
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+    networks:
+      - rabbitmq_go_net
+
   db_cardholder:
     image: postgres:11.5
     restart: always
@@ -38,3 +26,39 @@ services:
     command: redis-server
     ports:
       - '6379:6379'
+  grafana:
+    image: grafana/grafana:8.0.6-ubuntu
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - grafana-configs:/etc/grafana
+  prometheus:
+    image: prom/prometheus:v2.28.1
+    ports:
+      - "9090:9090"
+    volumes:
+      - prom-data:/prometheus
+      - prom-configs:/etc/prometheus
+  node-exporter:
+    image: prom/node-exporter:v1.2.0
+    ports:
+      - "9100:9100"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    command:
+      - '--path.procfs=/host/proc'
+      - '--path.sysfs=/host/sys'
+      - '--collector.filesystem.mount-points-exclude'
+      - '^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)'
+volumes:
+  grafana-data:
+  grafana-configs:
+  prom-data:
+  prom-configs:
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
