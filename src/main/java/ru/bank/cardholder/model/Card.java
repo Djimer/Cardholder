@@ -1,34 +1,36 @@
 package ru.bank.cardholder.model;
 
-import com.sun.istack.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.Data;
 
-import javax.persistence.*;
+import javax.persistence.Table;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Column;
+import javax.persistence.GenerationType;
 
 @Entity
-@NoArgsConstructor
-@Getter
-@Setter
 @Table(name = "card")
-@AllArgsConstructor
+@Data
 public class Card {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private int id;
+    private long id;
 
-    @Column(name="number")
+    @Column(name = "number")
     private String number;
-
-    private String name;
-
-    private String surname;
-
-    private String validityPeriod;
-
-    private String securityCode;
+//
+//    @Column(name = "name")
+//    private String name;
+//
+//    @Column(name = "surname")
+//    private String surname;
+//
+//    @Column(name = "validity_period")
+//    private String validityPeriod;
+//
+//    @Column(name = "security_code")
+//    private String securityCode;
 }

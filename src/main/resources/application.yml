@@ -8,7 +8,7 @@ spring:
     password: secret
     schemas: cardholder
     url: jdbc:postgresql://localhost:5430/cardholder?currentSchema=cardholder
-    enabled: true
+    enabled: false
   jpa:
     hibernate:
       naming:
