@@ -27,10 +27,19 @@ management:
     distribution:
       percentiles-histogram:
         "[http.server.requests]": true
-
-
-  #  spring.jpa.hibernate.ddl-auto= update
-  #  spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation= true
-  #spring.jpa.properties.hibernate.dialect= org.hibernate.dialect.PostgreSQLDialect
-
-  # Hibernate ddl auto (create, create-drop, validate, update)
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers: 0.0.0.0:8080
+          configuration:
+            auto-offset-reset: latest
+      bindings:
+        customChannel:
+          destination: 0.0.0.0:8080
+          group: input-group-N
+          contentType: application/json
+          consumer:
+            max-attempts: 1
+            autoCommitOffset: true
+            autoCommitOnError: false
