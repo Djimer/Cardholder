@@ -26,6 +26,8 @@ spring:
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
+    template:
+      default-topic: cardholder.bank.v1
 
 management:
   endpoints:

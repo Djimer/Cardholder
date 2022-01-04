@@ -1,8 +1,9 @@
 package ru.bank.cardholder.controller;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +21,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("card")
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class CardController {
-    private CardRepository cardRepository;
-    public static final String topic = "mytopic";
+
+    @Value("${spring.kafka.template.default-topic}")
+    private String topic;
+
+    private final CardRepository cardRepository;
 
     @Autowired
     private KafkaTemplate<String, Card> kafkaTemplate;
