@@ -19,6 +19,7 @@ repositories {
 }
 
 dependencies {
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-stream', version: '3.2.1'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-stream-kafka', version: '3.2.1'
     implementation group: 'io.swagger.core.v3', name: 'swagger-annotations', version: '2.1.10'
     implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.5.9'

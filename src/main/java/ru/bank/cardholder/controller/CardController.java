@@ -1,11 +1,12 @@
 package ru.bank.cardholder.controller;
 
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.bank.cardholder.model.Card;
 import ru.bank.cardholder.repository.CardRepository;
 
-import java.rmi.ServerException;
 import java.util.List;
 
 @RestController
@@ -23,8 +23,11 @@ import java.util.List;
 @AllArgsConstructor
 @Slf4j
 public class CardController {
-
     private CardRepository cardRepository;
+    public static final String topic = "mytopic";
+
+    @Autowired
+    private KafkaTemplate<String, Card> kafkaTemplate;
 
     @GetMapping(path = "/{number}")
     public List<Card> getCard(@PathVariable String number) {
@@ -35,12 +38,9 @@ public class CardController {
     @PostMapping(path = "/v1",
             consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Card> create(@RequestBody Card card) throws ServerException {
+    public ResponseEntity<Card> create(@RequestBody Card card) {
         cardRepository.save(card);
-        if (card == null) {
-            throw new ServerException("JOKE");
-        } else {
-            return new ResponseEntity<>(card, HttpStatus.CREATED);
-        }
+        kafkaTemplate.send(topic, card);
+        return new ResponseEntity<>(card, HttpStatus.CREATED);
     }
 }
